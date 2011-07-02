@@ -20,7 +20,7 @@ GtkWidget	*precision_window;
 GtkTextBuffer	*txtbuf;
 GtkStatusbar	*status_bar;
 guint		status_bar_ctx = -1;
-int		precision = 10;
+int		precision = 1000;
 vector<Matrix>	stack;
 
 double operator- (struct timeval &l, struct timeval &r) {
