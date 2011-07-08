@@ -21,9 +21,11 @@ Matrix::Matrix(int r, int c, mkmatflag flag) {
 	rows = r;
 	cols = c;
 	precision = 5;
+
 	for (r = 0; r < rows; r++)
 		for (c = 0; c < cols; c++)
 			data.push_back(0.0);
+
 	// if ident is set, set matrix to identity matrix
 	if (flag & IDENT) {
 		for (r = 0; r < rows; r++)
@@ -31,6 +33,7 @@ Matrix::Matrix(int r, int c, mkmatflag flag) {
 				data[r*cols+c] = (r == c) ? 1 : 0;
 		return;
 	}
+
 	// if random positive or negative numbers
 	if (flag & MIXED) {
 		for (r = 0; r < rows; r++)
@@ -38,13 +41,17 @@ Matrix::Matrix(int r, int c, mkmatflag flag) {
 				data[r*cols+c] = rand() % 200 - 100;
 		return;
 	}
+
 	// if random positive numbers which may sum to one
 	if (flag & (RAND | ONE))
 		for (r = 0; r < rows; r++)
 			for (c = 0; c < cols; c++)
 				data[r*cols+c] = rand() % 100;
+
 	// if all rows sum to one
-	if (!(flag & ONE)) return;
+	if (!(flag & ONE))
+		return;
+
 	for (r = 0; r < rows; r++) {
 		double sum = 0;
 		for (c = 0; c < cols; c++)

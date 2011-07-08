@@ -1,0 +1,19 @@
+</$objtype/mkfile
+
+BIN=$home/bin/$objtype
+
+TARG=g2m lo
+
+OFILES=\
+	vmatrix.$O\
+
+HFILES=\
+	vmatrix.h\
+
+UPDATE=\
+	mkfile\
+	$HFILES\
+	${OFILES:%.$O=%.c}\
+
+</sys/src/cmd/mkmany
+
