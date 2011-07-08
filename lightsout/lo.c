@@ -16,6 +16,9 @@ enum {
 	BLACK = 'b',
 };
 
+// recursive function to change solitary white neighbors
+// of vin[p].  assumes vin[p] is black.  tail-recursion(?)
+// returns 0 for zero-forcing sets
 int change(Matrix *m, unsigned int p, char *vin) {
 	unsigned register q;
 	unsigned int wneighbor = 0;
@@ -26,6 +29,7 @@ int change(Matrix *m, unsigned int p, char *vin) {
 		return 0;
 	}
 
+	// count white neighbors
 	for (q = 0; q < m->r; q++) {
 		if (q == p)
 			continue;
@@ -37,8 +41,10 @@ int change(Matrix *m, unsigned int p, char *vin) {
 		}
 	}
 
+	// if one white neighbor, switch it
 	if (wneighbors == 1) {
 		vin[wneighbor] = BLACK;
+		// follow the chain reaction
 		return change(m, wneighbor, vin);		
 	}
 
@@ -60,18 +66,23 @@ void check(Matrix *m, char *vin) {
 	print("\n");
 }
 
+// recursive function to generate combinations
 void pick(Matrix *m, char *vin, unsigned int p, unsigned int l) {
 	unsigned register q;
 	char *vals;
 
 	for (q = p; vin[q] != '\0'; q++) {
 		vals = strdup(vin);
+
 		if (vals[q] == WHITE) {
 			vals[q] = BLACK;
+
 			if (l == 1) {
 				check(m, vals);
+
 			} else {
 				pick(m, vals, q, l-1);
+
 			}
 		}
 		free(vals);
