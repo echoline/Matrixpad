@@ -23,10 +23,10 @@ int change(Matrix *m, unsigned int p, char *vin) {
 	unsigned register q;
 	unsigned int wneighbor = 0;
 	unsigned int wneighbors = 0;
+	unsigned int r = 0;
 
 	if (strchr(vin, WHITE) == nil) {
-		print ("is a zero-forcing set");
-		return 0;
+		return 1;
 	}
 
 	// count white neighbors
@@ -44,11 +44,16 @@ int change(Matrix *m, unsigned int p, char *vin) {
 	// if one white neighbor, switch it
 	if (wneighbors == 1) {
 		vin[wneighbor] = BLACK;
-		// follow the chain reaction
-		return change(m, wneighbor, vin);		
+
+		// check them all again...
+		// not tail recursive :(
+		for (q = 0; q < m->r; q++)
+			if (vin[q] == BLACK)
+				if(change(m, q, vin) == 1)
+					return 1;
 	}
 
-	return 1;
+	return 0;
 }
 
 void check(Matrix *m, char *vin) {
@@ -58,8 +63,10 @@ void check(Matrix *m, char *vin) {
 
 	for (q = 0; vin[q] != '\0'; q++) {
 		if (vin[q] == BLACK) {
-			if (change(m, q, vin) == 0)
+			if (change(m, q, vin) == 1) {
+				print ("is a zero-forcing set");
 				break;
+			}
 		}
 	}
 

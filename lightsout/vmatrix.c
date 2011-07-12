@@ -11,7 +11,6 @@
 #include <stdlib.h>
 #define nil NULL
 #define print printf
-#define fprint fprintf
 #else
 #include <u.h>
 #include <libc.h>
