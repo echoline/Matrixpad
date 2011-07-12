@@ -4,7 +4,7 @@
 #include <string.h>
 #define nil NULL
 #define print printf
-#define exits(x) { fprintf(stderr, x); exit(-1); }
+#define sysfatal(x) { fprintf(stderr, x); fprintf(stderr, "\n"); exit(-1); }
 #else
 #include <u.h>
 #include <libc.h>
@@ -18,14 +18,16 @@ enum {
 
 // recursive function to change solitary white neighbors
 // of vin[p].  assumes vin[p] is black.  tail-recursion(?)
-// returns 0 for zero-forcing sets
+// returns 1 for zero-forcing sets
 int change(Matrix *m, unsigned int p, char *vin) {
 	unsigned register q;
 	unsigned int wneighbor = 0;
 	unsigned int wneighbors = 0;
 	unsigned int r = 0;
 
+	// if there are no white vertices left...
 	if (strchr(vin, WHITE) == nil) {
+		// we started with a zero-forcing set
 		return 1;
 	}
 
@@ -45,7 +47,7 @@ int change(Matrix *m, unsigned int p, char *vin) {
 	if (wneighbors == 1) {
 		vin[wneighbor] = BLACK;
 
-		// check them all again...
+		// check them all again if we made a change
 		// not tail recursive :(
 		for (q = 0; q < m->r; q++)
 			if (vin[q] == BLACK)
@@ -56,6 +58,7 @@ int change(Matrix *m, unsigned int p, char *vin) {
 	return 0;
 }
 
+// check against m if vin is a zero-forcing set
 void check(Matrix *m, char *vin) {
 	unsigned register q;
 
@@ -73,7 +76,7 @@ void check(Matrix *m, char *vin) {
 	print("\n");
 }
 
-// recursive function to generate combinations
+// recursive function to pick l nodes
 void pick(Matrix *m, char *vin, unsigned int p, unsigned int l) {
 	unsigned register q;
 	char *vals;
@@ -96,6 +99,7 @@ void pick(Matrix *m, char *vin, unsigned int p, unsigned int l) {
 	}
 }
 
+// generate all permutations of 1 through N black nodes
 void combos(Matrix *m) {
 	unsigned register q;
 	char *vals;
@@ -115,10 +119,10 @@ int main() {
 	Matrix *m = scanmat();
 
 	if (m == nil)
-		exits("matrix read error");
+		sysfatal("matrix read error");
 
 	if (m->r != m->c) {
-		exits("matrix not square");
+		sysfatal("matrix not square");
 	}
 
 	print ("\n");
