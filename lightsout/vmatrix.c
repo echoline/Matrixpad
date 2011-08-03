@@ -7,7 +7,7 @@
  * invertmat(m, minv)	invert matrix m, result in minv, returns det(m)
  *			if m is singular, minv=adj(m)
  */
-#ifdef __linux__
+#if defined(__unix__) || defined(unix)
 #include <stdlib.h>
 #define nil NULL
 #define print printf

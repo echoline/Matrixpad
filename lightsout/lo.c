@@ -1,4 +1,4 @@
-#ifdef __linux__
+#if defined(__unix__) || defined(unix)
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

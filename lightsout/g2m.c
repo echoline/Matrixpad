@@ -1,4 +1,4 @@
-#ifdef __linux__
+#if defined(__unix__) || defined(unix)
 #include <stdlib.h>
 #define nil NULL
 #define print printf

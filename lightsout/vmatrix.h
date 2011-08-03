@@ -18,3 +18,4 @@ void matmulr(Matrix *, Matrix *);
 double determinant(Matrix *);
 void adjoint(Matrix *, Matrix *);
 double invertmat(Matrix *, Matrix *);
+
