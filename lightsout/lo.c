@@ -79,6 +79,8 @@ void check(Matrix *m, char *vin) {
 			}
 		}
 	}
+
+	free(vals);
 }
 
 // recursive function to pick l nodes
@@ -87,9 +89,8 @@ void pick(Matrix *m, char *vin, unsigned int p, unsigned int l) {
 	char *vals;
 
 	for (q = p; vin[q] != '\0'; q++) {
-		vals = strdup(vin);
-
-		if (vals[q] == WHITE) {
+		if (vin[q] == WHITE) {
+			vals = strdup(vin);
 			vals[q] = BLACK;
 
 			if (l == 1) {
@@ -99,8 +100,9 @@ void pick(Matrix *m, char *vin, unsigned int p, unsigned int l) {
 				pick(m, vals, q, l-1);
 
 			}
+
+			free(vals);
 		}
-		free(vals);
 	}
 }
 
