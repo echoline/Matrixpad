@@ -16,6 +16,9 @@ enum {
 	BLACK = 'b',
 };
 
+// global "found" flag
+char found = 0;
+
 // recursive function to change solitary white neighbors
 // of vin[p].  assumes vin[p] is black.  tail-recursion(?)
 // returns 1 for zero-forcing sets
@@ -39,6 +42,10 @@ int change(Matrix *m, unsigned int p, char *vin) {
 		if ((m->d[p][q] != 0.0)
 		  && (vin[q] == WHITE)) {
 			wneighbors++;
+
+			if (wneighbors > 1)
+				break;
+
 			wneighbor = q;
 		}
 	}
@@ -51,7 +58,7 @@ int change(Matrix *m, unsigned int p, char *vin) {
 		// not tail recursive :(
 		for (q = 0; q < m->r; q++)
 			if (vin[q] == BLACK)
-				if(change(m, q, vin) == 1)
+				if (change(m, q, vin) == 1)
 					return 1;
 	}
 
@@ -61,19 +68,17 @@ int change(Matrix *m, unsigned int p, char *vin) {
 // check against m if vin is a zero-forcing set
 void check(Matrix *m, char *vin) {
 	unsigned register q;
-
-	print("checking %s... ", vin);
+	char *vals = strdup(vin);
 
 	for (q = 0; vin[q] != '\0'; q++) {
 		if (vin[q] == BLACK) {
 			if (change(m, q, vin) == 1) {
-				print ("is a zero-forcing set");
+				print ("%s\n", vals);
+				found = 1;
 				break;
 			}
 		}
 	}
-
-	print("\n");
 }
 
 // recursive function to pick l nodes
@@ -104,7 +109,7 @@ void combos(Matrix *m) {
 	unsigned register q;
 	char *vals;
 
-	for (q = 1; q < m->r; q++) {
+	for (q = 1; q < m->r, !found; q++) {
 		vals = malloc(m->r + 1);
 		vals[m->r] = '\0';
 		memset(vals, WHITE, m->r);
