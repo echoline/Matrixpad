@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <omp.h>
 #define nil NULL
 #define print printf
 #define sysfatal(x) { fprintf(stderr, x); fprintf(stderr, "\n"); exit(-1); }
@@ -69,15 +70,21 @@ int change(Matrix *m, unsigned int p, char *vin) {
 void check(Matrix *m, char *vin) {
 	unsigned register q;
 	char *vals = strdup(vin);
+	int foundone = 0;
 
-	for (q = 0; vin[q] != '\0'; q++) {
+	#pragma omp parallel for private(foundone)
+	{
+	for (q = 0; vin[q] != '\0' && !foundone; q++) {
 		if (vin[q] == BLACK) {
 			if (change(m, q, vin) == 1) {
 				print ("%s\n", vals);
+				fflush(stdout);
 				found = 1;
+				foundone = 1;
 				break;
 			}
 		}
+	}
 	}
 
 	free(vals);
@@ -88,7 +95,7 @@ void pick(Matrix *m, char *vin, unsigned int p, unsigned int l) {
 	unsigned register q;
 	char *vals;
 
-	for (q = p; vin[q] != '\0'; q++) {
+	for (q = p; q < m->r; q++) {
 		if (vin[q] == WHITE) {
 			vals = strdup(vin);
 			vals[q] = BLACK;
@@ -133,6 +140,8 @@ int main() {
 	}
 
 	print ("\n");
+	fflush(stdout);
+
 	combos(m);
 
 	delmat(m);

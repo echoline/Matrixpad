@@ -1,4 +1,5 @@
 CFLAGS=-g
+LDFLAGS=-fopenmp
 
 all: g2m lo
 
