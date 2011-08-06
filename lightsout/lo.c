@@ -19,6 +19,8 @@ enum {
 
 // global "found" flag
 char found = 0;
+// global/thread local
+char foundone;
 
 // recursive function to change solitary white neighbors
 // of vin[p].  assumes vin[p] is black.  tail-recursion(?)
@@ -28,6 +30,10 @@ int change(Matrix *m, unsigned int p, char *vin) {
 	unsigned int wneighbor = 0;
 	unsigned int wneighbors = 0;
 	unsigned int r = 0;
+
+	// found one in this state space
+	if (foundone)
+		return 0;
 
 	// if there are no white vertices left...
 	if (strchr(vin, WHITE) == nil) {
@@ -69,23 +75,22 @@ int change(Matrix *m, unsigned int p, char *vin) {
 // check against m if vin is a zero-forcing set
 void check(Matrix *m, char *vin) {
 	unsigned register q;
-	char *vals = strdup(vin);
-	int foundone = 0;
+	char *vals;
 
-	#pragma omp parallel for
-	for (q = 0; q < m->r && !foundone; q++) {
-		if (vin[q] == BLACK) {
-			if (change(m, q, vin) == 1) {
-				print ("%s\n", vals);
-				fflush(stdout);
+	foundone = 0;
+
+	#pragma omp parallel for private(vals)
+	for (q = 0; q < m->r; q++) {
+		if (!foundone && vin[q] == BLACK) {
+			vals = strdup(vin);
+			if (change(m, q, vals) == 1) {
+				print ("%s\n", vin);
 				found = 1;
 				foundone = 1;
-				break;
 			}
+			free(vals);
 		}
 	}
-
-	free(vals);
 }
 
 // recursive function to pick l nodes
@@ -138,7 +143,6 @@ int main() {
 	}
 
 	print ("\n");
-	fflush(stdout);
 
 	combos(m);
 

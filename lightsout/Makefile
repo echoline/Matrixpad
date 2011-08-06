@@ -1,4 +1,4 @@
-CFLAGS=-g
+CFLAGS=-g -fopenmp
 LDFLAGS=-fopenmp
 
 all: g2m lo
