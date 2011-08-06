@@ -79,12 +79,16 @@ void check(Matrix *m, char *vin) {
 
 	foundone = 0;
 
-	#pragma omp parallel for private(vals)
+#pragma omp parallel for private(vals)
 	for (q = 0; q < m->r; q++) {
 		if (!foundone && vin[q] == BLACK) {
 			vals = strdup(vin);
 			if (change(m, q, vals) == 1) {
 				print ("%s\n", vin);
+// for correct piping to other programs
+#if defined(__unix__) || defined(unix)
+				fflush (stdout);
+#endif
 				found = 1;
 				foundone = 1;
 			}
@@ -143,6 +147,9 @@ int main() {
 	}
 
 	print ("\n");
+#if defined(__unix__) || defined(unix)
+	fflush (stdout);
+#endif
 
 	combos(m);
 
