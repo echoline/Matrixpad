@@ -72,9 +72,8 @@ void check(Matrix *m, char *vin) {
 	char *vals = strdup(vin);
 	int foundone = 0;
 
-	#pragma omp parallel for private(foundone)
-	{
-	for (q = 0; vin[q] != '\0' && !foundone; q++) {
+	#pragma omp parallel for
+	for (q = 0; q < m->r && !foundone; q++) {
 		if (vin[q] == BLACK) {
 			if (change(m, q, vin) == 1) {
 				print ("%s\n", vals);
@@ -84,7 +83,6 @@ void check(Matrix *m, char *vin) {
 				break;
 			}
 		}
-	}
 	}
 
 	free(vals);
