@@ -10,20 +10,23 @@
 #include <u.h>
 #include <libc.h>
 #endif
+// matrix helper functions
 #include "vmatrix.h"
 
+// these definitions refer to character values in strings defining
+// vertex colorings
 enum {
 	WHITE = 'w',
 	BLACK = 'b',
 };
 
-// global "found" flag
+// global "found" flag to leave combos()
 char found = 0;
-// global/thread local
+// to leave check()
 char foundone;
 
 // recursive function to change solitary white neighbors
-// of vin[p].  assumes vin[p] is black.  tail-recursion(?)
+// of vin[p].  assumes vin[p] is black.
 // returns 1 for zero-forcing sets
 int change(Matrix *m, unsigned int p, char *vin) {
 	unsigned register q;
@@ -62,7 +65,6 @@ int change(Matrix *m, unsigned int p, char *vin) {
 		vin[wneighbor] = BLACK;
 
 		// check them all again if we made a change
-		// not tail recursive :(
 		for (q = 0; q < m->r; q++)
 			if (vin[q] == BLACK)
 				if (change(m, q, vin) == 1)
@@ -77,10 +79,16 @@ void check(Matrix *m, char *vin) {
 	unsigned register q;
 	char *vals;
 
+	// we have not found one while checking this combo
 	foundone = 0;
 
+	// this is where the parallelization occurs.
+	// this for loop over each vertex gets split in OMP_NUM_THREADS
 #pragma omp parallel for private(vals)
 	for (q = 0; q < m->r; q++) {
+		// we don't break out of this loop, branching like that is
+		// not allowed.  that's what foundone var is for.  otherwise
+		// checks each black vertex against vin vertex color values
 		if (!foundone && vin[q] == BLACK) {
 			vals = strdup(vin);
 			if (change(m, q, vals) == 1) {
@@ -97,17 +105,20 @@ void check(Matrix *m, char *vin) {
 	}
 }
 
-// recursive function to pick l nodes
+// recursive function to pick l vertices in vin and turn them black
 void pick(Matrix *m, char *vin, unsigned int p, unsigned int l) {
 	unsigned register q;
 	char *vals;
 
 	for (q = p; q < m->r; q++) {
 		if (vin[q] == WHITE) {
+			// copy vin to vals
 			vals = strdup(vin);
 			vals[q] = BLACK;
 
 			if (l == 1) {
+				// leafs of state space check m against current
+				// vertex color values.
 				check(m, vals);
 
 			} else {
@@ -120,16 +131,20 @@ void pick(Matrix *m, char *vin, unsigned int p, unsigned int l) {
 	}
 }
 
-// generate all permutations of 1 through N black nodes
+// generate all permutations of 1 through N black vertices
 void combos(Matrix *m) {
 	unsigned register q;
 	char *vals;
 
+	// stop if we found least number of vertices needed
+	// by observing variable `found'
 	for (q = 1; q < m->r, !found; q++) {
 		vals = malloc(m->r + 1);
 		vals[m->r] = '\0';
 		memset(vals, WHITE, m->r);
 
+		// next step is to pick q vertices to turn black this 
+		// function calls check(adjacency matrix, vertex colors) too
 		pick(m, vals, 0, q);
 
 		free(vals);
@@ -151,6 +166,7 @@ int main() {
 	fflush (stdout);
 #endif
 
+	// enter the matrix.  (ha)
 	combos(m);
 
 	delmat(m);
