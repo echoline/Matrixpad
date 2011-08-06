@@ -133,7 +133,7 @@ void pick(Matrix *m, char *vin, unsigned int p, unsigned int l) {
 	}
 }
 
-// generate all permutations of 1 through N black vertices
+// generate all permutations of 1 through N-1 black vertices
 void combos(Matrix *m) {
 	unsigned register q;
 	char *vals;
