@@ -53,6 +53,8 @@ int change(Matrix *m, unsigned int p, char *vin) {
 		  && (vin[q] == WHITE)) {
 			wneighbors++;
 
+			// Nathan's suggestion; if we have two white neighbors,
+			// no need to keep checking
 			if (wneighbors > 1)
 				break;
 
