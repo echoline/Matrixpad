@@ -163,11 +163,6 @@ int main() {
 		sysfatal("matrix not square");
 	}
 
-	print ("\n");
-#if defined(__unix__) || defined(unix)
-	fflush (stdout);
-#endif
-
 	// enter the matrix.  (ha)
 	combos(m);
 
