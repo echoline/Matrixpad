@@ -164,7 +164,11 @@ int main() {
 		sysfatal("matrix not square");
 	}
 
+<<<<<<< HEAD
 	// main subroutine
+=======
+	// enter the matrix.  (ha)
+>>>>>>> 550b9b4a4367475320574a64dd5fc963726719a9
 	combos(m);
 
 	delmat(m);
