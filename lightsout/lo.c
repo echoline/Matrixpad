@@ -154,6 +154,7 @@ void combos(Matrix *m) {
 }
 
 int main() {
+	// scan a matrix in using format of vmatrix.o
 	Matrix *m = scanmat();
 
 	if (m == nil)
@@ -163,12 +164,7 @@ int main() {
 		sysfatal("matrix not square");
 	}
 
-	print ("\n");
-#if defined(__unix__) || defined(unix)
-	fflush (stdout);
-#endif
-
-	// enter the matrix.  (ha)
+	// main subroutine
 	combos(m);
 
 	delmat(m);
